@@ -100,6 +100,10 @@ class SAXHelper {
                 throw new SAXException( "Could not initialize a SAX Parser. Please add a SAX parser to your classpath along with preferably jaxp.jar" );
             }
         }
+
+        // external DTD
+        SAXHelper.setParserFeature(reader,"http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
         return reader;
     }
 

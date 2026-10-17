@@ -206,12 +206,14 @@ public class DocumentHelper {
     /** <p><code>parseText</code> parses the given text as an XML document
       * and returns the newly created Document.
       *
+      * Loading external DTD and entities is disabled (if it is possible) for security reasons.
+      *
       * @param text is the XML text to be parsed
       * @return a newly parsed Document
       * @throws DocumentException if the document could not be parsed
       */
     public static Document parseText(String text) throws DocumentException {
-        SAXReader reader = new SAXReader();
+        SAXReader reader = SAXReader.createDefault();
         return reader.read( new StringReader( text ) );
     }
 

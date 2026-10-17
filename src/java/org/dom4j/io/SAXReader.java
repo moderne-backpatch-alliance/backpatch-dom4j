@@ -124,6 +124,22 @@ public class SAXReader {
     private XMLFilter xmlFilter;
     
     
+    /** Creates a <code>SAXReader</code> whose parser reads no external DTD,
+      * external general entities or external parameter entities.
+      */
+    public static SAXReader createDefault() {
+        SAXReader reader = new SAXReader();
+        try {
+            reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            reader.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        }
+        catch (SAXException e) {
+            // nothing to do, incompatible reader
+        }
+        return reader;
+    }
+
     public SAXReader() {
     }
 
