@@ -125,6 +125,9 @@ public class QNameCache {
         if ( index < 0 ) {
             return get( qualifiedName, Namespace.get( uri ) );
         }
+        else if ( index == 0 ) {
+            throw new IllegalArgumentException( "Qualified name cannot start with ':'." );
+        }
         else {
             String name = qualifiedName.substring( index + 1 );
             String prefix = qualifiedName.substring( 0, index );

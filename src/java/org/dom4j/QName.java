@@ -73,12 +73,23 @@ public class QName implements Serializable {
     public QName(String name, Namespace namespace) {
         this.name = (name == null) ? "" : name;
         this.namespace = (namespace == null) ? Namespace.NO_NAMESPACE : namespace;
+        if ( this.namespace.equals( Namespace.NO_NAMESPACE ) ) {
+            validateName( this.name );
+        }
+        else {
+            validateNCName( this.name );
+        }
     }
 
     public QName(String name, Namespace namespace, String qualifiedName) {
         this.name = (name == null) ? "" : name;
         this.qualifiedName = qualifiedName;
         this.namespace = (namespace == null) ? Namespace.NO_NAMESPACE : namespace;
+        validateNCName( this.name );
+        // a null qualified name is derived later from the validated prefix and name
+        if ( this.qualifiedName != null ) {
+            validateQName( this.qualifiedName );
+        }
     }
 
 
@@ -199,6 +210,79 @@ public class QName implements Serializable {
         cachePerThread.set(cache);
       }
       return cache;
+    }
+
+    private static void validateName(String name) {
+        if ( ! isName( name, true ) ) {
+            throw new IllegalArgumentException( "Illegal character in name: '" + name + "'." );
+        }
+    }
+
+    protected static void validateNCName(String ncname) {
+        if ( ! isName( ncname, false ) ) {
+            throw new IllegalArgumentException( "Illegal character in local name: '" + ncname + "'." );
+        }
+    }
+
+    private static void validateQName(String qname) {
+        int index = qname.indexOf( ':' );
+        boolean valid = ( index < 0 )
+            ? isName( qname, false )
+            : isName( qname.substring( 0, index ), false ) && isName( qname.substring( index + 1 ), false );
+        if ( ! valid ) {
+            throw new IllegalArgumentException( "Illegal character in qualified name: '" + qname + "'." );
+        }
+    }
+
+    /** XML 1.0 / 1.1 <code>Name</code> when <code>colon</code> is true,
+      * otherwise <code>NCName</code>; characters outside the Basic
+      * Multilingual Plane are rejected.
+      */
+    private static boolean isName(String name, boolean colon) {
+        int length = name.length();
+        if ( length == 0 ) {
+            return false;
+        }
+        char c = name.charAt( 0 );
+        if ( ! ( isNameStartChar( c ) || ( colon && c == ':' ) ) ) {
+            return false;
+        }
+        for ( int i = 1; i < length; i++ ) {
+            c = name.charAt( i );
+            if ( ! ( isNameChar( c ) || ( colon && c == ':' ) ) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** <code>NameStartChar</code> without the colon */
+    private static boolean isNameStartChar(char c) {
+        return c == '_'
+            || ( c >= 'A' && c <= 'Z' )
+            || ( c >= 'a' && c <= 'z' )
+            || ( c >= 'À' && c <= 'Ö' )
+            || ( c >= 'Ø' && c <= 'ö' )
+            || ( c >= 'ø' && c <= '˿' )
+            || ( c >= 'Ͱ' && c <= 'ͽ' )
+            || ( c >= 'Ϳ' && c <= '῿' )
+            || ( c >= '‌' && c <= '‍' )
+            || ( c >= '⁰' && c <= '↏' )
+            || ( c >= 'Ⰰ' && c <= '⿯' )
+            || ( c >= '、' && c <= '퟿' )
+            || ( c >= '豈' && c <= '﷏' )
+            || ( c >= 'ﷰ' && c <= '�' );
+    }
+
+    /** <code>NameChar</code> without the colon */
+    private static boolean isNameChar(char c) {
+        return isNameStartChar( c )
+            || c == '-'
+            || c == '.'
+            || ( c >= '0' && c <= '9' )
+            || c == '·'
+            || ( c >= '̀' && c <= 'ͯ' )
+            || ( c >= '‿' && c <= '⁀' );
     }
 
 }

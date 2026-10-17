@@ -138,14 +138,17 @@ public class SchemaParser {
     protected void onDatatypeElement( Element xsdElement , DocumentFactory parentFactory ) {
         String name = xsdElement.attributeValue( "name" );
         String type = xsdElement.attributeValue( "type" );
-        QName qname = getQName( name );
-
-        DatatypeElementFactory elementFactory = getDatatypeElementFactory( qname );
+        QName qname = null;
+        DatatypeElementFactory elementFactory = null;
+        if ( name != null ) {
+            qname = getQName( name );
+            elementFactory = getDatatypeElementFactory( qname );
+        }
 
         if ( type != null ) {
             // register type with this element name
             XSDatatype dataType = getTypeByName(type);
-            if (dataType!=null) {
+            if (dataType!=null && elementFactory != null) {
                 elementFactory.setChildElementXSDatatype( qname, dataType );
             } 
             else {
@@ -162,25 +165,29 @@ public class SchemaParser {
             XSDatatype dataType = loadXSDatatypeFromSimpleType( xsdSimpleType );
             if (dataType != null) {
                 System.out.println("dataType (from loadXSDatatypeFromSimpleType) = " + dataType);
-                elementFactory.setChildElementXSDatatype( qname, dataType );
+                if ( elementFactory != null ) {
+                    elementFactory.setChildElementXSDatatype( qname, dataType );
+                }
             }
         }
         
         Element schemaComplexType = xsdElement.element( XSD_COMPLEXTYPE );
-        if ( schemaComplexType != null ) {
+        if ( schemaComplexType != null && elementFactory != null ) {
             onSchemaComplexType( schemaComplexType, elementFactory );
         }
 
-        Iterator iter = xsdElement.elementIterator( XSD_ATTRIBUTE );
-        if ( iter.hasNext() ) {
-            do {
-                onDatatypeAttribute(
-                    xsdElement,
-                    elementFactory,
-                    (Element) iter.next()
-                );
+        if ( elementFactory != null ) {
+            Iterator iter = xsdElement.elementIterator( XSD_ATTRIBUTE );
+            if ( iter.hasNext() ) {
+                do {
+                    onDatatypeAttribute(
+                        xsdElement,
+                        elementFactory,
+                        (Element) iter.next()
+                    );
+                }
+                while ( iter.hasNext() );
             }
-            while ( iter.hasNext() );
         }
     }
 

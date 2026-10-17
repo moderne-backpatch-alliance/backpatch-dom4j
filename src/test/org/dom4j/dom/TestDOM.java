@@ -119,7 +119,7 @@ public class TestDOM extends AbstractTestCase {
         assertEquals(newFirst, firstChild);
         
         /* try to replace a node that doesn't exist */
-        org.w3c.dom.Element badNode = document.createElement("No Child");
+        org.w3c.dom.Element badNode = document.createElement("No-Child");
         try {
             parent.replaceChild(newFirst, badNode);
             fail("DOMException should be throwed when trying to replace non existing child");

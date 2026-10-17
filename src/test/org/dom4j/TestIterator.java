@@ -44,7 +44,7 @@ public class TestIterator extends AbstractTestCase {
         Element root = iterDocument.addElement( "root" );
 
         for (int i = 0; i < NUMELE; i++) {
-            root.addElement( "iterator test")
+            root.addElement( "iterator-test")
                 .addAttribute( "instance", Integer.toString(i));
         }
     }
@@ -56,7 +56,7 @@ public class TestIterator extends AbstractTestCase {
         Element root = iterDocument.getRootElement();
         assertTrue( "Has root element", root != null );
         
-        List elements = root.elements( "iterator test" );
+        List elements = root.elements( "iterator-test" );
         int elementSize = elements.size();
         assertTrue( "Root has " + elementSize + " children",
                     elements != null && elementSize == NUMELE );
@@ -65,8 +65,8 @@ public class TestIterator extends AbstractTestCase {
 
     public void testPlainIteration() throws Exception {
         Element root = iterDocument.getRootElement();
-        List elements = root.elements( "iterator test" );
-        Iterator iter = root.elementIterator( "iterator test" );
+        List elements = root.elements( "iterator-test" );
+        Iterator iter = root.elementIterator( "iterator-test" );
         int elementSize = elements.size();
         
         int count = 0;
@@ -84,8 +84,8 @@ public class TestIterator extends AbstractTestCase {
 
     public void testSkipAlternates() throws Exception {
         Element root = iterDocument.getRootElement();
-        List elements = root.elements( "iterator test" );
-        Iterator iter = root.elementIterator( "iterator test" );
+        List elements = root.elements( "iterator-test" );
+        Iterator iter = root.elementIterator( "iterator-test" );
         int elementSize = elements.size();
         int count = 0;
         for (; iter.hasNext();) {
@@ -103,8 +103,8 @@ public class TestIterator extends AbstractTestCase {
 
     public void testNoHasNext() throws Exception {
         Element root = iterDocument.getRootElement();
-        List elements = root.elements( "iterator test" );
-        Iterator iter = root.elementIterator( "iterator test" );
+        List elements = root.elements( "iterator-test" );
+        Iterator iter = root.elementIterator( "iterator-test" );
         int elementSize = elements.size();
         int count = 0;
         Element e = null;
@@ -135,8 +135,8 @@ public class TestIterator extends AbstractTestCase {
 
     public void testExtraHasNexts() throws Exception {
         Element root = iterDocument.getRootElement();
-        List elements = root.elements( "iterator test" );
-        Iterator iter = root.elementIterator( "iterator test" );
+        List elements = root.elements( "iterator-test" );
+        Iterator iter = root.elementIterator( "iterator-test" );
         int elementSize = elements.size();
         int count = 0;
         for (; iter.hasNext();) {
