@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 1.4.1-backpatch-00001
+release: 1.4.1-backpatch-00002
 baseline: v1.4+backpatch.baseline
 fixes:
   - cve: CVE-2020-10683
@@ -10,12 +10,20 @@ fixes:
     basis: adapted
     artifacts:
       - dom4j:dom4j
-    note: New in this release; adapted onto 1.4; fixed at 1.4.1-backpatch-00001 (backpatch-dom4j@7cffba5).
+    note: Carried from 1.4.1-backpatch-00001.
+  - cve: CVE-2018-1000632
+    upstream_fix_url: https://github.com/dom4j/dom4j/commit/e598eb43d418744c4dbf62f647dd2381c9ce9387
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2018-1000632
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-dom4j/compare/fa9d59a~1...5d8a974
+    basis: adapted
+    artifacts:
+      - dom4j:dom4j
+    note: New in this release; adapted onto 1.4; fixed at 1.4.1-backpatch-00002 (backpatch-dom4j@fa9d59a..5d8a974).
 tests:
-  commit: 7cffba521be4e8069d01fe4290235d0a1b4d26f6
+  commit: 5d8a974360369a4f5e1bc535d09b2abb3a18a6f3
   command: "JAVA_HOME=<jdk-7> /bin/bash <alliance>/work/wave2/items/scripts/dom4j-1.4.sh suite <m2> "
   runtime: Azul Zulu (Java 1.7.0_352), Apache Ant 1.9.16 JUnitTestRunner, macOS x86_64 under Rosetta 2
-  report: dom4j-1.4.1-backpatch-00001-tests.zip
-  report_sha256: 630d3a43c640dbfa4fac43f5e0f724f64f10fe28ed87ae9764f0c0419b47b22d
+  report: dom4j-1.4.1-backpatch-00002-tests.zip
+  report_sha256: 18a7f5c46de292f5065e6fde7a6b5feff402e49cb5a29460ef73d55865ec98e6
   result: pass
-  note: "the full suite at the tested commit, 286 tests run, 2 failed, each failing at the baseline v1.4+backpatch.baseline too (the same suite there: 281 run, 2 failed), 0 skipped; the regression tests for CVE-2020-10683 are TestExternalResources"
+  note: "run at 8ae1c7c453d4, whose tree equals this commit's apart from .backpatch/patch-evidence.yaml; the full suite at the tested commit, 299 tests run, 2 failed, each failing at the baseline v1.4+backpatch.baseline too (the same suite there: 281 run, 2 failed), 0 skipped; the regression tests for CVE-2018-1000632 are TestAllowedChars, TestDOM, TestIterator"
