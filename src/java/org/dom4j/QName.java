@@ -73,6 +73,11 @@ public class QName implements Serializable {
         this.name = (name == null) ? "" : name;
         this.namespace = (namespace == null) ? Namespace.NO_NAMESPACE
                 : namespace;
+        if (this.namespace.equals(Namespace.NO_NAMESPACE)) {
+            validateName(this.name);
+        } else {
+            validateNCName(this.name);
+        }
     }
 
     public QName(String name, Namespace namespace, String qualifiedName) {
@@ -80,6 +85,8 @@ public class QName implements Serializable {
         this.qualifiedName = qualifiedName;
         this.namespace = (namespace == null) ? Namespace.NO_NAMESPACE
                 : namespace;
+        validateNCName(this.name);
+        validateQName(this.qualifiedName);
     }
 
     public static QName get(String name) {
@@ -252,6 +259,81 @@ public class QName implements Serializable {
     private static QNameCache getCache() {
         QNameCache cache = (QNameCache) singleton.instance();
         return cache;
+    }
+
+    private static void validateName(String name) {
+        if (!isName(name, true)) {
+            throw new IllegalArgumentException("Illegal character in name: '"
+                    + name + "'.");
+        }
+    }
+
+    protected static void validateNCName(String ncname) {
+        if (!isName(ncname, false)) {
+            throw new IllegalArgumentException(
+                    "Illegal character in local name: '" + ncname + "'.");
+        }
+    }
+
+    private static void validateQName(String qname) {
+        int index = qname.indexOf(':');
+        boolean valid = (index < 0) ? isName(qname, false) : (isName(qname
+                .substring(0, index), false) && isName(qname
+                .substring(index + 1), false));
+
+        if (!valid) {
+            throw new IllegalArgumentException(
+                    "Illegal character in qualified name: '" + qname + "'.");
+        }
+    }
+
+    // Character tests, not java.util.regex: the baseline targets Java 1.3, which
+    // has no regex. Same ranges as upstream's patterns, so surrogates are refused.
+    private static boolean isName(String name, boolean colon) {
+        int length = name.length();
+
+        if (length == 0) {
+            return false;
+        }
+
+        char c = name.charAt(0);
+
+        if (!(isNameStartChar(c) || (colon && (c == ':')))) {
+            return false;
+        }
+
+        for (int i = 1; i < length; i++) {
+            c = name.charAt(i);
+
+            if (!(isNameChar(c) || (colon && (c == ':')))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean isNameStartChar(char c) {
+        return (c == '_') || ((c >= 'A') && (c <= 'Z'))
+                || ((c >= 'a') && (c <= 'z'))
+                || ((c >= '\u00C0') && (c <= '\u00D6'))
+                || ((c >= '\u00D8') && (c <= '\u00F6'))
+                || ((c >= '\u00F8') && (c <= '\u02FF'))
+                || ((c >= '\u0370') && (c <= '\u037D'))
+                || ((c >= '\u037F') && (c <= '\u1FFF'))
+                || ((c >= '\u200C') && (c <= '\u200D'))
+                || ((c >= '\u2070') && (c <= '\u218F'))
+                || ((c >= '\u2C00') && (c <= '\u2FEF'))
+                || ((c >= '\u3001') && (c <= '\uD7FF'))
+                || ((c >= '\uF900') && (c <= '\uFDCF'))
+                || ((c >= '\uFDF0') && (c <= '\uFFFD'));
+    }
+
+    private static boolean isNameChar(char c) {
+        return isNameStartChar(c) || (c == '-') || (c == '.')
+                || ((c >= '0') && (c <= '9')) || (c == '\u00B7')
+                || ((c >= '\u0300') && (c <= '\u036F'))
+                || ((c >= '\u203F') && (c <= '\u2040'));
     }
 }
 
