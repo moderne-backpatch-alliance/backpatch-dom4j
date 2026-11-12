@@ -135,6 +135,20 @@ public class SAXReader {
     /** The SAX filter used to filter SAX events */
     private XMLFilter xmlFilter;
 
+    public static SAXReader createDefault() {
+        SAXReader reader = new SAXReader();
+
+        try {
+            reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            reader.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        } catch (SAXException e) {
+            // nothing to do, incompatible reader
+        }
+
+        return reader;
+    }
+
     public SAXReader() {
     }
 

@@ -269,7 +269,7 @@ public final class DocumentHelper {
     public static Document parseText(String text) throws DocumentException {
         Document result = null;
 
-        SAXReader reader = new SAXReader();
+        SAXReader reader = SAXReader.createDefault();
         String encoding = getEncoding(text);
 
         InputSource source = new InputSource(new StringReader(text));
