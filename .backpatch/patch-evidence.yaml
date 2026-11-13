@@ -1,0 +1,21 @@
+schema: osera-patch-evidence/0.1.0
+producer: moderne
+release: 1.6.1.1-backpatch-00001
+baseline: v1.6.1+backpatch.baseline
+fixes:
+  - cve: CVE-2018-1000632
+    upstream_fix_url: https://github.com/advisories/GHSA-6pcc-3rfx-4gpm
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2018-1000632
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-dom4j/commit/d2168ee
+    basis: adapted
+    artifacts:
+      - dom4j:dom4j
+    note: New in this release; ported onto 1.6.1; fixed at 1.6.1.1-backpatch-00001 (backpatch-dom4j@d2168ee).
+tests:
+  commit: d2168ee62e001378ad38fc513cdcc2968394e925
+  command: Ant 1.10.14, the tag's build.xml through a driver that only overrides compile and test, target test with **/*Test.java; the report decides -Dtest.excludes=**/StaxTest.java,**/RuleTest.java
+  runtime: openjdk version 1.8.0_382 (Zulu) for the tests, Apache Ant 1.10.14; main classes compiled by Zulu 6u42's javac
+  report: dom4j-1.6.1.1-backpatch-00001-tests.zip
+  report_sha256: f653bc0f561cf5dba2f716e5a2a1562993038b183e0c4c80687ccc4840d0fb05
+  result: pass
+  note: "899 tests at the patch commit, 0 of them skipped by the suite, 0 failed, 0 errors. Left out of the run as accepted exceptions: org.dom4j.io.StaxTest#testEncoding (the JDK's built-in StAX parser wins over the reference implementation the test was written for; upstream disabled this test in a9da11b); org.dom4j.rule.RuleTest#testOrder (Rule.compareTo rounds the priority difference, a defect JDK 7+'s sort exposes; upstream fixed it in affce67 (2.0.0), not ported). Main classes compiled with Zulu 6u42's javac at the build's source and target; test classes compiled and run on Zulu 8. Ant runs no method-level exclusion, so StaxTest and RuleTest are left out as classes, which also drops RuleTest's passing testDocument and testTextMatchesCDATA."
